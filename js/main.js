@@ -32,10 +32,10 @@ var getMixedArray = function (arr) {
   return arr;
 };
 
-// генерирование случайного элемента массива
+/* // генерирование случайного элемента массива
 var getRandomArrayItem = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
-};
+};*/
 
 // генерирование случайного числа из диапазона
 var getRandomNumber = function (min, max) {
@@ -76,7 +76,7 @@ var photoUrls = getMixedArray(getArrayOfNumbers(PHOTOS_NUMBER));
 var getComment = function (authorName) {
   getMixedArray(commentTexts);
   return {
-    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg', // генерация случайного адреса аватарки
     message: Math.round(Math.random()) ? commentTexts[0] : (commentTexts[0] + commentTexts[1]),
     name: authorName
   };
@@ -101,3 +101,9 @@ var getDescription = function (numericalItem) {
     comments: getCommentList(getRandomNumber(commentScore.min, commentScore.max))
   };
 };
+
+// создадим массив из 25 сгенерированный описаний
+var descriptionsList = [];
+for (var i = 0; i < PHOTOS_NUMBER; i++) {
+  descriptionsList.push(getDescription(photoUrls[i]));
+}
