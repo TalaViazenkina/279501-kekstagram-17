@@ -44,16 +44,19 @@ var getRandomNumber = function (min, max) {
 
 
 // исходные данные для генерирования описаний
+// количество лайков
 var like = {
   min: 15,
   max: 200
 };
 
-var commentNumber = {
+// количество комментариев
+var commentScore = {
   min: 0,
   max: 5
 };
 
+// текст комментариев
 var commentTexts = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -63,4 +66,38 @@ var commentTexts = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
+// имена авторов комментариев
 var commentName = ['Артем', 'Ксюша', '212-85-06', 'ДедМазай', 'Злобный Кто', 'ProffИ', 'Dr.Good', 'Сан Саныч', 'Coca&Coca'];
+
+// массив чисел для генерации адреса фотографии
+var photoUrls = getMixedArray(getArrayOfNumbers(PHOTOS_NUMBER));
+
+// сгенерируем случайный комментарий
+var getComment = function (authorName) {
+  getMixedArray(commentTexts);
+  return {
+    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+    message: Math.round(Math.random()) ? commentTexts[0] : (commentTexts[0] + commentTexts[1]),
+    name: authorName
+  };
+};
+
+// сгенерируем блок комментариев к фотографии
+var getCommentList = function (score) {
+  getMixedArray(commentName);
+  var commentList = [];
+  for (var i = 1; i <= score; i++) {
+    commentList.push(getComment(commentName[i]));
+  }
+
+  return commentList;
+};
+
+// создадим случайное описание фотографии
+var getDescription = function (numericalItem) {
+  return {
+    url: 'photos/' + numericalItem + '.jpg',
+    likes: getRandomNumber(like.min, like.max),
+    comments: getCommentList(getRandomNumber(commentScore.min, commentScore.max))
+  };
+};
