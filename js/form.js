@@ -30,13 +30,13 @@
   var pinSize; // размер пина
   var currentFilter; // текущий выбранный фильтр
 
-  //диапазон возможных положений пина
+  // диапазон возможных положений пина
   var pinLocation = {
     min: 0,
     max: 0
   };
 
-
+  // ф-ции, необходимые для закрытия формы редактирования
   /**
   * скрывает форму редактирования
   */
@@ -44,8 +44,8 @@
     formContainerElement.classList.add('hidden');
     fileUploadElement.value = '';
 
-    formElement.removeEventListener('click', onFormClick);
-    formElement.removeEventListener('change', onFormChange);
+    formElement.removeEventListener('click', onButtonSizeClick);
+    formElement.removeEventListener('change', onFormFilterChange);
     filterPinElement.removeEventListener('mousedown', onPinMouseDown);
     formCloseElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onFormEscPress);
@@ -68,23 +68,8 @@
     }
   };
 
-  /**
-  * удаляет с элемента класс, начинающийся с искомой строки
-  * @param {Element} el
-  * @param {String} unit
-  */
-  var removeClass = function (el, unit) {
-    if (el.classList.length !== 0) {
-      var initialClasses = Array.prototype.slice.call(el.classList);
-      initialClasses.forEach(function (it) {
-        if (it.indexOf(unit) === 0) {
-          el.classList.remove(it);
-        }
-      });
-    }
-  };
 
-
+  //  ф-ции, необходимые для изменения размеров превью
   /**
   * увеличивает размер превью
   */
@@ -111,20 +96,17 @@
   * изменяет размер превью в зависисти от кнопки
   * @param {Event} evt
   */
-  var onFormClick = function (evt) {
+  var onButtonSizeClick = function (evt) {
     if (evt.target === scaleBiggerElement) {
       increaseSize();
     } else if (evt.target === scaleSmallerElement) {
       decreaseSize();
     }
-
   };
 
 
-
-
-
-  /** сравнивает полученную координату с заданным диапазоном
+  // ф-ции, необходимые для реализации эффектов фильтров
+  /** сравнивает полученную координату с заданным диапазоном (при передвижении пина)
   * @param {number} initialCoord
   * @param {number} shiftCoord
   * @param {number} minCoord
@@ -144,8 +126,7 @@
     return testCoord;
   };
 
-
-   // объект-мапа соотношений названий фильтров и соответствующих стилей
+  // объект-мапа соотношений названий фильтров и соответствующих стилей
   var filterStyleMap = {
     'chrome': {
       min: 0,
@@ -199,7 +180,7 @@
   };
 
   /**
-  * действия при "захвате" объекта мышкой
+  * действия при "захвате" ползунка мышкой
   * @param {Event} evt
   */
   var onPinMouseDown = function (evt) {
@@ -217,23 +198,26 @@
 
       // определяем сдвиг курсора относительно предыдущего
       var shift = moveEvt.clientX - startCoord;
-
       // переменная для хранения результатов вычисления координат
       var currentValue = checkCoord(filterPinElement.offsetLeft, shift, pinLocation.min, pinLocation.max);
+
       // перемещаем пин
       filterPinElement.style.left = currentValue + 'px';
       // изменяем размер окрашенной области шкалы
       filterDepthElement.style.width = currentValue + 'px';
       // изменяем значение глубины эффекта
       filterInputElement.value = (currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min);
-      // применим эффект
+      // применяем эффект
       previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
-
 
       // записываем в стартовую координату текущую координату
       startCoord = moveEvt.clientX;
     };
 
+    /**
+    * действия при отпускании ползунка мышкой
+    * @param {Event} upEvt
+    */
     var onPinMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
@@ -243,10 +227,27 @@
 
     document.addEventListener('mousemove', onPinMouseMove);
     document.addEventListener('mouseup', onPinMouseUp);
-
   };
 
-  var onFormChange = function (evt) {
+  // ф-ции, необходимые для реализации переключения фильтров
+  /**
+  * удаляет с элемента класс, начинающийся с искомой строки
+  * @param {Element} el
+  * @param {String} unit
+  */
+  var removeClass = function (el, unit) {
+    if (el.classList.length !== 0) {
+      var initialClasses = Array.prototype.slice.call(el.classList);
+      initialClasses.forEach(function (it) {
+        if (it.indexOf(unit) === 0) {
+          el.classList.remove(it);
+        }
+      });
+    }
+  };
+
+
+  var onFormFilterChange = function (evt) {
     if (evt.target.name === 'effect') {
 
       // удаляем с превью класс начинающийся с 'effects__preview--'
@@ -265,19 +266,22 @@
   // открытие формы редактирования при выборе файла
   fileUploadElement.addEventListener('change', function () {
     formContainerElement.classList.remove('hidden');
-    // получим необходимые размеры
+    // получим необходимые размеры пина и шкалы
     pinSize = filterPinElement.offsetWidth;
     pinLocation.min = pinSize / 2;
     pinLocation.max = filterScaleElement.offsetWidth - (pinSize / 2);
 
+    // установим значения по умолчанию в соответствии с ТЗ
+    scaleInputElement.value = '100%';
 
-    formElement.addEventListener('click', onFormClick);
-    // переключение фильтра
-    formElement.addEventListener('change', onFormChange);
+    // добавляем листенер изменения размеров превью
+    formElement.addEventListener('click', onButtonSizeClick);
+    // добавляем листенер переключения фильтров
+    formElement.addEventListener('change', onFormFilterChange);
 
 
 
-    // закрытие формы
+    // добавляем листенеры закрытия формы
     formCloseElement.addEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onFormEscPress);
   });
