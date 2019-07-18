@@ -41,6 +41,8 @@
     max: 0
   };
 
+  var textareaElement = formElement.querySelector('.text__description'); // поле ввода комментария
+
   // ф-ции, необходимые для закрытия формы редактирования
   /**
   * скрывает форму редактирования
@@ -70,7 +72,7 @@
   * @param {Event} evt
   */
   var onFormEscPress = function (evt) {
-    if (window.utils.isEscEvent(evt)) {
+    if (window.utils.isEscEvent(evt) && textareaElement !== document.activeElement) {
       closeForm();
     }
   };
