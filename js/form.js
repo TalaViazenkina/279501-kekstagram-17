@@ -22,10 +22,13 @@
   var scaleInputElement = formElement.querySelector('.scale__control--value');
 
   // управление эффектами (фильтрами)
-  var filterScaleElement = formElement.querySelector('.effect-level__line'); //шкала
-  var filterPinElement = filterScaleElement.querySelector('.effect-level__pin'); //ползунок
+  var scaleBlockElement = formElement.querySelector('.img-upload__effect-level'); // весь блок со шкалой и ползунком
+  var filterScaleElement = scaleBlockElement.querySelector('.effect-level__line'); // шкала
+  var filterPinElement = filterScaleElement.querySelector('.effect-level__pin'); // ползунок
   var filterDepthElement = filterScaleElement.querySelector('.effect-level__depth');
-  var filterInputElement = formElement.querySelector('.effect-level__value'); // инпут
+  var filterInputElement = scaleBlockElement.querySelector('.effect-level__value'); // инпут
+  var filterValueInitial = 1; // стартовое значение фильтра
+  var isScaleVisible; // флаг отображения шкалы эффекта
 
   var pinSize; // размер пина
   var currentFilter; // текущий выбранный фильтр
@@ -46,9 +49,10 @@
 
     formElement.removeEventListener('click', onButtonSizeClick);
     formElement.removeEventListener('change', onFormFilterChange);
-    filterPinElement.removeEventListener('mousedown', onPinMouseDown);
     formCloseElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onFormEscPress);
+    filterPinElement.removeEventListener('mousedown', onPinMouseDown);
+
   };
 
   /**
@@ -253,11 +257,34 @@
       // удаляем с превью класс начинающийся с 'effects__preview--'
       removeClass(previewElement, 'effects__preview--');
 
-      // добавляем новый класс в зависимости от фильтра
       if (evt.target.value !== 'none') {
-        previewElement.classList.add('effects__preview--' + evt.target.value);
+        // добавляем шкалу, если она была скрыта и обработчик перемещения ползунка
+        if (!isScaleVisible) {
+          scaleBlockElement.style.display = 'block';
+          isScaleVisible = true; // меняем флаг
+
+        }
+        // выставляем ползунок на максимум
+        filterPinElement.style.left = pinLocation.max + 'px';
+        filterDepthElement.style.width = pinLocation.max + 'px';
+        // сбрасываем значение глубины фильтра
+        filterInputElement.value = filterValueInitial;
+
+        // обновляем значение текущего фильтра
         currentFilter = evt.target.value;
-        filterPinElement.addEventListener('mousedown', onPinMouseDown);
+        // добавляем новый класс в зависимости от фильтра
+        previewElement.classList.add('effects__preview--' + currentFilter);
+        // обновляем стили
+        previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
+
+      } else {
+        // скрываем шкалу
+        if (isScaleVisible) {
+          scaleBlockElement.style.display = 'none';
+          isScaleVisible = false; // меняем флаг
+        }
+        // обнуляем стили
+        previewElement.style.filter = '';
       }
 
     }
@@ -265,6 +292,7 @@
 
   // открытие формы редактирования при выборе файла
   fileUploadElement.addEventListener('change', function () {
+    // показываем форму редактирования
     formContainerElement.classList.remove('hidden');
     // получим необходимые размеры пина и шкалы
     pinSize = filterPinElement.offsetWidth;
@@ -278,6 +306,8 @@
     formElement.addEventListener('click', onButtonSizeClick);
     // добавляем листенер переключения фильтров
     formElement.addEventListener('change', onFormFilterChange);
+    // добавляем листенер передвижения ползунка
+    filterPinElement.addEventListener('mousedown', onPinMouseDown);
 
 
 
