@@ -27,6 +27,7 @@
   var filterPinElement = filterScaleElement.querySelector('.effect-level__pin'); // ползунок
   var filterDepthElement = filterScaleElement.querySelector('.effect-level__depth');
   var filterInputElement = scaleBlockElement.querySelector('.effect-level__value'); // инпут
+  var filterOriginalElement = formElement.querySelector('#effect-none'); // фильтр "без эффекта"
   var filterValueInitial = 100; // стартовое значение фильтра
   var coefficient = 100; // для перевода долей в проценты
   var isScaleVisible; // флаг отображения шкалы эффекта
@@ -52,8 +53,9 @@
     formElement.removeEventListener('change', onFormFilterChange);
     formCloseElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onFormEscPress);
-    filterPinElement.removeEventListener('mousedown', onPinMouseDown);
-
+    if (isScaleVisible) {
+      filterPinElement.removeEventListener('mousedown', onPinMouseDown);
+    }
   };
 
   /**
@@ -270,7 +272,7 @@
         if (!isScaleVisible) {
           scaleBlockElement.style.display = 'block';
           isScaleVisible = true; // меняем флаг
-
+          filterPinElement.addEventListener('mousedown', onPinMouseDown);
         }
         // выставляем ползунок на максимум
         movePin(pinLocation.max);
@@ -286,10 +288,11 @@
         previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 
       } else {
-        // скрываем шкалу
+        // скрываем шкалу и удаляем обработчик
         if (isScaleVisible) {
           scaleBlockElement.style.display = 'none';
           isScaleVisible = false; // меняем флаг
+          filterPinElement.removeEventListener('mousedown', onPinMouseDown);
         }
         // обнуляем стили
         previewElement.style.filter = '';
@@ -310,12 +313,15 @@
     // установим значения по умолчанию в соответствии с ТЗ
     scaleInputElement.value = '100%';
 
+    // переключаем фильтр на Оригинал и скрываем шкалу
+    filterOriginalElement.checked = true;
+    scaleBlockElement.style.display = 'none';
+    isScaleVisible = false; // меняем флаг
+
     // добавляем листенер изменения размеров превью
     formElement.addEventListener('click', onButtonSizeClick);
     // добавляем листенер переключения фильтров
     formElement.addEventListener('change', onFormFilterChange);
-    // добавляем листенер передвижения ползунка
-    filterPinElement.addEventListener('mousedown', onPinMouseDown);
 
 
 
