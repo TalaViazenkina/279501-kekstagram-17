@@ -27,7 +27,8 @@
   var filterPinElement = filterScaleElement.querySelector('.effect-level__pin'); // ползунок
   var filterDepthElement = filterScaleElement.querySelector('.effect-level__depth');
   var filterInputElement = scaleBlockElement.querySelector('.effect-level__value'); // инпут
-  var filterValueInitial = 1; // стартовое значение фильтра
+  var filterValueInitial = 100; // стартовое значение фильтра
+  var coefficient = 100; // для перевода долей в проценты
   var isScaleVisible; // флаг отображения шкалы эффекта
 
   var pinSize; // размер пина
@@ -130,6 +131,15 @@
     return testCoord;
   };
 
+  /**
+  * перемещает ползунок и  изменяет окрашенную область шкалы на заданную величину
+  * @param {number} value
+  */
+  var movePin = function (value) {
+    filterPinElement.style.left = value + 'px';
+    filterDepthElement.style.width = value + 'px';
+  };
+
   // объект-мапа соотношений названий фильтров и соответствующих стилей
   var filterStyleMap = {
     'chrome': {
@@ -176,7 +186,7 @@
   */
   var composeFilterString = function (filter, value) {
     // рассчитаем величину эффекта в зависимости от min и max значений, допустимых для данного фильтра
-    var calculatedValue = value * (filter.max - filter.min) + filter.min;
+    var calculatedValue = value / coefficient * (filter.max - filter.min) + filter.min;
     // соберем строку с названием фильтра, его значением и единицами измерения
     var filterString = filter.style + '(' + calculatedValue + filter.unit + ')';
 
@@ -205,12 +215,10 @@
       // переменная для хранения результатов вычисления координат
       var currentValue = checkCoord(filterPinElement.offsetLeft, shift, pinLocation.min, pinLocation.max);
 
-      // перемещаем пин
-      filterPinElement.style.left = currentValue + 'px';
-      // изменяем размер окрашенной области шкалы
-      filterDepthElement.style.width = currentValue + 'px';
+      // перемещаем ползунок
+      movePin(currentValue);
       // изменяем значение глубины эффекта
-      filterInputElement.value = (currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min);
+      filterInputElement.value = (currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min) * coefficient;
       // применяем эффект
       previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 
@@ -265,8 +273,8 @@
 
         }
         // выставляем ползунок на максимум
-        filterPinElement.style.left = pinLocation.max + 'px';
-        filterDepthElement.style.width = pinLocation.max + 'px';
+        movePin(pinLocation.max);
+
         // сбрасываем значение глубины фильтра
         filterInputElement.value = filterValueInitial;
 
