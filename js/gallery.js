@@ -12,6 +12,19 @@
 
   var filtersContainerElement = document.querySelector('section.img-filters');
 
+  var isPictureList; // флаг наличия отрисованных фото
+
+  /**
+  * удаляет отрисованные фото из разметки
+  */
+  var clearPicture = function () {
+    var pictureArray = Array.prototype.slice.call(document.querySelectorAll('.picture'));
+    pictureArray.forEach(function (it) {
+      it.remove();
+    });
+    isPictureList = false; // меняем флаг
+  };
+
   /**
   * отрисовывает фото
   * @param {Object} obj
@@ -41,6 +54,11 @@
   * @param {Array} arr
   */
   var renderPictureList = function (arr) {
+    // удаляем уже отрисованные фото, если они есть
+    if (isPictureList) {
+      clearPicture();
+    }
+
     var fragment = document.createDocumentFragment();
 
     arr.forEach(function (it) {
@@ -48,11 +66,12 @@
     });
 
     picturesContainerElement.appendChild(fragment);
+    isPictureList = true; // меняем флаг
   };
 
   var onSuccessLoad = function (response) {
     window.gallery.data = response;
-    renderPictureList(data);
+    renderPictureList(window.gallery.data);
     filtersContainerElement.classList.remove('img-filters--inactive');
   };
 
@@ -64,7 +83,8 @@
 
   window.gallery = {
     data: data,
-    filtersContainer: filtersContainerElement
+    filtersContainer: filtersContainerElement,
+    renderPictureList: renderPictureList
   };
 
 })();
