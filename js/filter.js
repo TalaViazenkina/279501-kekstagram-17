@@ -75,12 +75,11 @@
         currentFilter.classList.remove(classActive);
         evt.target.classList.add(classActive);
         currentFilter = evt.target;
-
-        // в зависимоти от фильтра получим массив фото
-        filteredPhotos = filterFunctiontMap[evt.target.id](window.gallery.data);
-        // отрисуем полученный массив
-        window.debounce(updateGallery);
       }
+      // в зависимоти от фильтра получим массив фото
+      filteredPhotos = filterFunctiontMap[evt.target.id](window.gallery.data);
+      // отрисуем полученный массив
+      window.debounce(updateGallery);
     }
   });
 
