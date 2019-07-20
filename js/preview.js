@@ -11,9 +11,15 @@
   var descriptionElement = bigPictureElement.querySelector('.social__caption');
   var likesCountElement = bigPictureElement.querySelector('.likes-count'); // количество лайков
   var commentsCountElement = bigPictureElement.querySelector('.comments-count'); //  количество комментариев
+  var commentsCountPartElement = bigPictureElement.querySelector('.comments-part');
+  var commentsCountBlockElement = bigPictureElement.querySelector('.social__comment-count'); // Блок со строкой "5 из ... комментариев"
   var commentsListElement = bigPictureElement.querySelector('.social__comments'); // блок с комментариями
+  var commentsLoaderElement = bigPictureElement.querySelector('.comments-loader'); // кнопка загрузки комментариев
 
   var commentItem; // шаблон комментария
+  var commentsArray = []; // массив комментариев
+  var counter; // счетчик "страниц" с комментариями
+
 
   /**
   * закрывает окно просмотра
@@ -25,6 +31,9 @@
     // удаляем листенеры
     closeButtonElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onBigPictureEscPress);
+    if (!commentsLoaderElement.classList.contains('hidden')) {
+      commentsLoaderElement.removeEventListener('click', onLoaderClick);
+    }
   };
 
   /**
@@ -144,6 +153,41 @@
   };
 
   /**
+  * заполняет блок заданным числом комментариев
+  * @param {Arary} comments
+  */
+  var showCommentsPart = function (comments) {
+    // выделим из массива первые 5 элементов
+    var commentsPart = comments.splice(0, COMMENT_MAX_COUNT);
+    // отрисуем их
+    fillCommentsList(commentsPart);
+    // выведем сообщение о количестве показанных комментариев
+    fillField(commentsCountPartElement, (counter * COMMENT_MAX_COUNT));
+    counter++; // увеличим счетчик
+
+  };
+
+
+  /**
+  * запускает отрисовку следующих 5 комментариев
+  * @param {Event} evt
+  */
+  var onLoaderClick = function (evt) {
+    evt.preventDefault();
+    if (commentsArray.length > COMMENT_MAX_COUNT) {
+      showCommentsPart(commentsArray);
+    } else {
+      fillCommentsList(commentsArray);
+      // исправляем строку с "5 из .. комментариев"
+      fillField(commentsCountPartElement, commentsCountElement.textContent);
+      // скрываем кнопку загрузки и удаляем обработчик
+      commentsLoaderElement.removeEventListener('click', onLoaderClick);
+      window.utils.hideNode(commentsLoaderElement);
+    }
+  };
+
+
+  /**
   * отрисовывает полноэкранное изображение
   * @param {Object} obj
   */
@@ -163,12 +207,38 @@
     // очистим блок с комментариями, если комментариев нет
     if (!obj.comments || obj.comments.length === 0) {
       clearComments();
+      window.utils.hideNode(commentsCountBlockElement);
     } else {
+      // создаем шаблон комментария
       commentItem = createComment();
-      fillCommentsList(obj.comments);
+
+      // если комментариев 5 либо меньше
+      if (obj.comments.length <= COMMENT_MAX_COUNT) {
+        // отрисовываем комменты
+        fillCommentsList(obj.comments);
+        // скрываем кнопку загрузки дополнительных комментариев
+        window.utils.hideNode(commentsLoaderElement);
+        // показываем и исправляем строку с "5 из .. комментариев"
+        window.utils.showNode(commentsCountBlockElement);
+        fillField(commentsCountPartElement, obj.comments.length);
+
+      } else {
+        // если комментариев больше 5
+        // показываем кнопку загрузки комментов и строку "5 из ... комментариев"
+        window.utils.showNode(commentsLoaderElement);
+        window.utils.showNode(commentsCountBlockElement);
+
+        // на кнопку загрузки добавляем обработчик
+        commentsLoaderElement.addEventListener('click', onLoaderClick);
+
+        // скопируем комментарии в отдельный массив
+        commentsArray = obj.comments.slice();
+        // отрисуем первые 5
+        counter = 1;
+        showCommentsPart(commentsArray);
+
+      }
     }
-
-
 
 
     // добавим листнеры закрытия
