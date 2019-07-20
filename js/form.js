@@ -48,7 +48,7 @@
   * скрывает форму редактирования
   */
   var closeForm = function () {
-    formContainerElement.classList.add('hidden');
+    window.utils.hideNode(formContainerElement);
     fileUploadElement.value = '';
 
     formElement.removeEventListener('click', onButtonSizeClick);
@@ -272,7 +272,7 @@
       if (evt.target.value !== 'none') {
         // добавляем шкалу, если она была скрыта и обработчик перемещения ползунка
         if (!isScaleVisible) {
-          scaleBlockElement.style.display = 'block';
+          window.utils.showNode(scaleBlockElement);
           isScaleVisible = true; // меняем флаг
           filterPinElement.addEventListener('mousedown', onPinMouseDown);
         }
@@ -292,7 +292,7 @@
       } else {
         // скрываем шкалу и удаляем обработчик
         if (isScaleVisible) {
-          scaleBlockElement.style.display = 'none';
+          window.utils.hideNode(scaleBlockElement);
           isScaleVisible = false; // меняем флаг
           filterPinElement.removeEventListener('mousedown', onPinMouseDown);
         }
@@ -306,7 +306,7 @@
   // открытие формы редактирования при выборе файла
   fileUploadElement.addEventListener('change', function () {
     // показываем форму редактирования
-    formContainerElement.classList.remove('hidden');
+    window.utils.showNode(formContainerElement);
     // получим необходимые размеры пина и шкалы
     pinSize = filterPinElement.offsetWidth;
     pinLocation.min = pinSize / 2;
@@ -317,7 +317,7 @@
 
     // переключаем фильтр на Оригинал и скрываем шкалу
     filterOriginalElement.checked = true;
-    scaleBlockElement.style.display = 'none';
+    window.utils.hideNode(scaleBlockElement);
     isScaleVisible = false; // меняем флаг
 
     // добавляем листенер изменения размеров превью

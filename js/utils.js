@@ -47,6 +47,26 @@
         arr[randomIndex] = temp; // на место случайно выбранного элемента записан элемент с индексом i
       }
       return arr;
+    },
+
+    /**
+    * добавляет к элементу класс hidden
+    * @param {HTMLElement} node
+    */
+    hideNode: function (node) {
+      if (!node.classList.contains('hidden')) {
+        node.classList.add('hidden');
+      }
+    },
+
+    /**
+    * удаляет у элемента класс hidden
+    * @param {HTMLElement} node
+    */
+    showNode: function (node) {
+      if (node.classList.contains('hidden')) {
+        node.classList.remove('hidden');
+      }
     }
   };
 })();
