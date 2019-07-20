@@ -46,6 +46,11 @@
     var pictureCommentElement = picture.querySelector('.picture__comments');
     pictureCommentElement.textContent = obj.comments.length;
 
+    picture.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      window.preview.render(obj);
+    });
+
     return picture;
   };
 
