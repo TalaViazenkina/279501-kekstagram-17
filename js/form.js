@@ -222,7 +222,7 @@
       // перемещаем ползунок
       movePin(currentValue);
       // изменяем значение глубины эффекта
-      filterInputElement.value = (currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min) * coefficient;
+      filterInputElement.value = Math.round((currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min) * coefficient);
       // применяем эффект
       previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 
