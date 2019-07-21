@@ -2,11 +2,21 @@
 
 // модуль формы редактирования фотографии
 (function () {
+  // диапазон значений размеров превью по ТЗ
   var ScaleValue = {
     MIN: 25,
     MAX: 100,
     STEP: 25
   };
+
+  // диапазон длины хэш-тега по ТЗ
+  var HashtagLength = {
+    MIN: 2,
+    MAX: 20
+  };
+
+  // маскимальное допустимое количество хэш-тегов по ТЗ
+  var HASHTAG_MAX_COUNT = 5;
 
   var formElement = document.querySelector('#upload-select-image');
 
@@ -42,6 +52,7 @@
   };
 
   var textareaElement = formElement.querySelector('.text__description'); // поле ввода комментария
+  var hashtagInputElement = formElement.querySelector('.text__hashtags'); // поле ввода хэш-тегов
 
   // ф-ции, необходимые для закрытия формы редактирования
   /**
@@ -53,6 +64,7 @@
 
     formElement.removeEventListener('click', onButtonSizeClick);
     formElement.removeEventListener('change', onFormFilterChange);
+    hashtagInputElement.removeEventListener('change', onHashtagInputChange);
     formCloseElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onFormEscPress);
     if (isScaleVisible) {
@@ -303,6 +315,95 @@
     }
   };
 
+
+  // ф-ции необходимые для валидации хэш-тегов
+  /**
+  * проверяет наличие решетки в начале хэш-тега
+  * @param {Array} arr
+  * @return {boolean}
+  */
+  var checkHashtagStart = function (arr) {
+    return arr.some(function (it) {
+      return it[0] !== '#';
+    });
+  };
+
+  /**
+  * проверяет длину хэш-тега
+  * @param {Array} arr
+  * @return {boolean}
+  */
+  var checkHashtagLength = function (arr) {
+    return arr.some(function (it) {
+      return it.length < HashtagLength.MIN || it.length > HashtagLength.MAX;
+    });
+  };
+
+  /**
+  * проверяет разделители хэш-тегов
+  * @param {Array} arr
+  * @return {boolean}
+  */
+  var checkHashtagSeparator = function (arr) {
+    return arr.some(function (it) {
+      return it.lastIndexOf('#') !== 0;
+    });
+  };
+
+  /**
+  * проверяет уникальность хэш-тегов
+  * @param {Array} arr
+  * @return {boolean}
+  */
+  var checkUniqueHashtag = function (arr) {
+    // создадим вспомогательный объект
+    var obj = {};
+    // и все элементы массивы запишем в виде ключей этого объекта
+    // ключи уникальны, поэтому если элементы повторяются, значение ключа будет переписано, но ключ повторяться не будет
+    arr.forEach(function (it) {
+      var key = it;
+      obj[key] = true;
+    });
+
+    // сравним количество ключей и длину исходного массива
+    return arr.length === Object.keys(obj);
+  };
+
+  /**
+  * валидирует поле ввода хэш-тега
+  */
+  var onHashtagInputChange = function () {
+    // преобразуем строку с хэштегами в массив
+    // и удалим пустые элементы (последствия двойных пробелов и пробела в конце строки)
+    var hashtags = hashtagInputElement.value.toLowerCase().split(' ').filter(function (it) {
+      return it.length > 0;
+    });
+    // зададим начальное значение сообщению об ошибке
+    var validityMessage = '';
+
+    if (checkHashtagStart(hashtags)) {
+      validityMessage += 'Хэш-тег должен начинаться со знака #. ';
+    }
+
+    if (checkHashtagLength(hashtags)) {
+      validityMessage += 'Длина хэш-тег (не включая #) должна быть не менее 1 символа и не более 19. ';
+    }
+
+    if (checkHashtagSeparator(hashtags)) {
+      validityMessage += 'Хэш-теги должны быть разделены пробелом (знак \'#\' означает начало нового хэш-тега). ';
+    }
+
+    if (hashtags.length > HASHTAG_MAX_COUNT) {
+      validityMessage += 'Максимальное допустимое число хэш-тегов равно 5. ';
+    }
+
+    if (!checkUniqueHashtag(hashtags)) {
+      validityMessage += 'Хэш-теги не должны повторяться. ';
+    }
+
+    hashtagInputElement.setCustomValidity(validityMessage);
+  };
+
   // открытие формы редактирования при выборе файла
   fileUploadElement.addEventListener('change', function () {
     // показываем форму редактирования
@@ -325,13 +426,12 @@
     // добавляем листенер переключения фильтров
     formElement.addEventListener('change', onFormFilterChange);
 
-
+    // добавляем листенер ввода хэш-тегов
+    hashtagInputElement.addEventListener('change', onHashtagInputChange);
 
     // добавляем листенеры закрытия формы
     formCloseElement.addEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onFormEscPress);
   });
-
-
 
 })();
