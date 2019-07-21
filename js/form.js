@@ -84,7 +84,9 @@
   * @param {Event} evt
   */
   var onFormEscPress = function (evt) {
-    if (window.utils.isEscEvent(evt) && textareaElement !== document.activeElement) {
+    if (window.utils.isEscEvent(evt) &&
+      textareaElement !== document.activeElement &&
+      hashtagInputElement !== document.activeElement) {
       closeForm();
     }
   };
