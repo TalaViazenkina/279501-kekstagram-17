@@ -404,6 +404,7 @@
     }
 
     hashtagInputElement.setCustomValidity(validityMessage);
+    hashtagInputElement.style.boxShadow = (validityMessage.length > 0) ? '0 0 0 3px red' : 'none';
   };
 
 
