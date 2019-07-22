@@ -406,6 +406,22 @@
     hashtagInputElement.setCustomValidity(validityMessage);
   };
 
+
+  /**
+  * отправляет форму
+  * @param {Event} evt
+  */
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    // запускаем отправку данных на сервер только в том случае,
+    // если в данный момент никакая другая отправка не выполняется
+    if (!window.backend.isSaving) {
+      window.backend.isSaving = true;
+      var formData = new FormData(formElement);
+      window.backend.save(formData, window.popup.onSuccess, window.popup.onError);
+    }
+  };
+
   // открытие формы редактирования при выборе файла
   fileUploadElement.addEventListener('change', function () {
     // показываем форму редактирования
@@ -430,6 +446,9 @@
 
     // добавляем листенер ввода хэш-тегов
     hashtagInputElement.addEventListener('change', onHashtagInputChange);
+
+    // добавляем листенер отправки
+    formElement.addEventListener('submit', onFormSubmit);
 
     // добавляем листенеры закрытия формы
     formCloseElement.addEventListener('click', onCloseButtonClick);
