@@ -99,22 +99,22 @@
   */
   var createComment = function () {
     // создадим блок комментария
-    var comment = document.createElement('li');
-    comment.classList.add('social__comment');
+    var commentElement = document.createElement('li');
+    commentElement.classList.add('social__comment');
 
     // добавим изображение
     var image = document.createElement('img');
     image.classList.add('social__picture');
     image.width = AVATAR_SIZE;
     image.height = AVATAR_SIZE;
-    comment.appendChild(image);
+    commentElement.appendChild(image);
 
     // добавим текстовое поле
     var text = document.createElement('p');
     text.classList.add('social__text');
-    comment.appendChild(text);
+    commentElement.appendChild(text);
 
-    return comment;
+    return commentElement;
   };
 
   /**

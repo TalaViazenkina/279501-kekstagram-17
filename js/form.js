@@ -246,7 +246,7 @@
       // удаляем с превью класс начинающийся с 'effects__preview--'
       removeClass(previewElement, 'effects__preview--');
 
-      if (evt.target.value !== 'none') {
+      if (evt.target.id !== 'effect-none') {
         // добавляем шкалу, если она была скрыта и обработчик перемещения ползунка
         if (!isScaleVisible) {
           window.utils.showNode(scaleBlockElement);
@@ -388,6 +388,7 @@
     window.utils.hideNode(formContainerElement);
     // "сбрасываем" форму
     window.data.form.reset();
+    fileUploadElement.value = '';
     // у превью удаляем класс с именем эффекта и обнуляем эффекты
     clearEffect();
 
@@ -472,7 +473,9 @@
   });
 
   window.form = {
-    close: closeForm
+    fileLoader: fileUploadElement,
+    close: closeForm,
+    onEscPress: onFormEscPress
   };
 
 })();

@@ -41,7 +41,7 @@
         if (xhr.status === 200) {
           onSuccess(xhr.response);
         } else {
-          onError('Ошибка загрузки файла');
+          onError('Статус ответа сервера: ' + xhr.status + ' ' + xhr.statusText);
         }
         window.backend.isSaving = false; // меняем флаг
       });
