@@ -348,7 +348,7 @@
   */
   var checkHashtagSeparator = function (arr) {
     return arr.some(function (it) {
-      return it.lastIndexOf('#') !== 0;
+      return it.lastIndexOf('#') > 0;
     });
   };
 
@@ -368,7 +368,7 @@
     });
 
     // сравним количество ключей и длину исходного массива
-    return arr.length === Object.keys(obj);
+    return arr.length === Object.keys(obj).length;
   };
 
   /**
