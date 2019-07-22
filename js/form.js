@@ -18,26 +18,24 @@
   // маскимальное допустимое количество хэш-тегов по ТЗ
   var HASHTAG_MAX_COUNT = 5;
 
-  var formElement = document.querySelector('#upload-select-image');
+  var fileUploadElement = window.data.form.querySelector('#upload-file'); // поле загрузки фото
+  var formContainerElement = window.data.form.querySelector('.img-upload__overlay');
+  var formCloseElement = window.data.form.querySelector('#upload-cancel'); // закрытие формы редактирования
 
-  var fileUploadElement = formElement.querySelector('#upload-file'); // поле загрузки фото
-  var formContainerElement = formElement.querySelector('.img-upload__overlay');
-  var formCloseElement = formElement.querySelector('#upload-cancel'); // закрытие формы редактирования
-
-  var previewElement = formElement.querySelector('.img-upload__preview img');
+  var previewElement = window.data.form.querySelector('.img-upload__preview img');
 
   // управление размером
-  var scaleSmallerElement = formElement.querySelector('.scale__control--smaller');
-  var scaleBiggerElement = formElement.querySelector('.scale__control--bigger');
-  var scaleInputElement = formElement.querySelector('.scale__control--value');
+  var scaleSmallerElement = window.data.form.querySelector('.scale__control--smaller');
+  var scaleBiggerElement = window.data.form.querySelector('.scale__control--bigger');
+  var scaleInputElement = window.data.form.querySelector('.scale__control--value');
 
   // управление эффектами (фильтрами)
-  var scaleBlockElement = formElement.querySelector('.img-upload__effect-level'); // весь блок со шкалой и ползунком
+  var scaleBlockElement = window.data.form.querySelector('.img-upload__effect-level'); // весь блок со шкалой и ползунком
   var filterScaleElement = scaleBlockElement.querySelector('.effect-level__line'); // шкала
   var filterPinElement = filterScaleElement.querySelector('.effect-level__pin'); // ползунок
   var filterDepthElement = filterScaleElement.querySelector('.effect-level__depth');
   var filterInputElement = scaleBlockElement.querySelector('.effect-level__value'); // инпут
-  var filterOriginalElement = formElement.querySelector('#effect-none'); // фильтр "без эффекта"
+  var filterOriginalElement = window.data.form.querySelector('#effect-none'); // фильтр "без эффекта"
   var filterValueInitial = 100; // стартовое значение фильтра
   var coefficient = 100; // для перевода долей в проценты
   var isScaleVisible; // флаг отображения шкалы эффекта
@@ -51,8 +49,8 @@
     max: 0
   };
 
-  var textareaElement = formElement.querySelector('.text__description'); // поле ввода комментария
-  var hashtagInputElement = formElement.querySelector('.text__hashtags'); // поле ввода хэш-тегов
+  var textareaElement = window.data.form.querySelector('.text__description'); // поле ввода комментария
+  var hashtagInputElement = window.data.form.querySelector('.text__hashtags'); // поле ввода хэш-тегов
 
   // ф-ции, необходимые для закрытия формы редактирования
   /**
@@ -62,8 +60,9 @@
     window.utils.hideNode(formContainerElement);
     fileUploadElement.value = '';
 
-    formElement.removeEventListener('click', onButtonSizeClick);
-    formElement.removeEventListener('change', onFormFilterChange);
+    window.data.form.removeEventListener('click', onButtonSizeClick);
+    window.data.form.removeEventListener('change', onFormFilterChange);
+    window.data.form.removeEventListener('submit', onFormSubmit);
     hashtagInputElement.removeEventListener('change', onHashtagInputChange);
     formCloseElement.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onFormEscPress);
@@ -418,7 +417,7 @@
     // если в данный момент никакая другая отправка не выполняется
     if (!window.backend.isSaving) {
       window.backend.isSaving = true;
-      var formData = new FormData(formElement);
+      var formData = new FormData(window.data.form);
       window.backend.save(formData, window.popup.onSuccess, window.popup.onError);
     }
   };
@@ -441,15 +440,15 @@
     isScaleVisible = false; // меняем флаг
 
     // добавляем листенер изменения размеров превью
-    formElement.addEventListener('click', onButtonSizeClick);
+    window.data.form.addEventListener('click', onButtonSizeClick);
     // добавляем листенер переключения фильтров
-    formElement.addEventListener('change', onFormFilterChange);
+    window.data.form.addEventListener('change', onFormFilterChange);
 
     // добавляем листенер ввода хэш-тегов
     hashtagInputElement.addEventListener('change', onHashtagInputChange);
 
     // добавляем листенер отправки
-    formElement.addEventListener('submit', onFormSubmit);
+    window.data.form.addEventListener('submit', onFormSubmit);
 
     // добавляем листенеры закрытия формы
     formCloseElement.addEventListener('click', onCloseButtonClick);
