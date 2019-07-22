@@ -52,43 +52,7 @@
   var textareaElement = window.data.form.querySelector('.text__description'); // поле ввода комментария
   var hashtagInputElement = window.data.form.querySelector('.text__hashtags'); // поле ввода хэш-тегов
 
-  // ф-ции, необходимые для закрытия формы редактирования
-  /**
-  * скрывает форму редактирования
-  */
-  var closeForm = function () {
-    window.utils.hideNode(formContainerElement);
-    fileUploadElement.value = '';
 
-    window.data.form.removeEventListener('click', onButtonSizeClick);
-    window.data.form.removeEventListener('change', onFormFilterChange);
-    window.data.form.removeEventListener('submit', onFormSubmit);
-    hashtagInputElement.removeEventListener('change', onHashtagInputChange);
-    formCloseElement.removeEventListener('click', onCloseButtonClick);
-    document.removeEventListener('keydown', onFormEscPress);
-    if (isScaleVisible) {
-      filterPinElement.removeEventListener('mousedown', onPinMouseDown);
-    }
-  };
-
-  /**
-  * закрывает форму по клику на "крестик"
-  */
-  var onCloseButtonClick = function () {
-    closeForm();
-  };
-
-  /**
-  * закрывает форму по esc
-  * @param {Event} evt
-  */
-  var onFormEscPress = function (evt) {
-    if (window.utils.isEscEvent(evt) &&
-      textareaElement !== document.activeElement &&
-      hashtagInputElement !== document.activeElement) {
-      closeForm();
-    }
-  };
 
 
   //  ф-ции, необходимые для изменения размеров превью
@@ -316,6 +280,16 @@
     }
   };
 
+  /**
+  * убирает у превью эффект фильтра
+  */
+  var clearEffect = function () {
+    // удаляем с превью класс начинающийся с 'effects__preview--'
+    removeClass(previewElement, 'effects__preview--');
+    // сбрасывает стили
+    previewElement.style.filter = '';
+  };
+
 
   // ф-ции необходимые для валидации хэш-тегов
   /**
@@ -404,6 +378,48 @@
 
     hashtagInputElement.setCustomValidity(validityMessage);
     hashtagInputElement.style.boxShadow = (validityMessage.length > 0) ? '0 0 0 3px red' : 'none';
+  };
+
+  // ф-ции, необходимые для закрытия формы редактирования
+  /**
+  * скрывает форму редактирования
+  */
+  var closeForm = function () {
+    window.utils.hideNode(formContainerElement);
+    // "сбрасываем" форму
+    window.data.form.reset();
+    // у превью удаляем класс с именем эффекта и обнуляем эффекты
+    clearEffect();
+
+    // удаляем листенеры
+    window.data.form.removeEventListener('click', onButtonSizeClick);
+    window.data.form.removeEventListener('change', onFormFilterChange);
+    window.data.form.removeEventListener('submit', onFormSubmit);
+    hashtagInputElement.removeEventListener('change', onHashtagInputChange);
+    formCloseElement.removeEventListener('click', onCloseButtonClick);
+    document.removeEventListener('keydown', onFormEscPress);
+    if (isScaleVisible) {
+      filterPinElement.removeEventListener('mousedown', onPinMouseDown);
+    }
+  };
+
+  /**
+  * закрывает форму по клику на "крестик"
+  */
+  var onCloseButtonClick = function () {
+    closeForm();
+  };
+
+  /**
+  * закрывает форму по esc
+  * @param {Event} evt
+  */
+  var onFormEscPress = function (evt) {
+    if (window.utils.isEscEvent(evt) &&
+      textareaElement !== document.activeElement &&
+      hashtagInputElement !== document.activeElement) {
+      closeForm();
+    }
   };
 
 
