@@ -471,4 +471,8 @@
     document.addEventListener('keydown', onFormEscPress);
   });
 
+  window.form = {
+    close: closeForm
+  };
+
 })();
