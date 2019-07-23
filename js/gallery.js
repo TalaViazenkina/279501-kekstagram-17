@@ -48,7 +48,7 @@
 
     picture.addEventListener('click', function (evt) {
       evt.preventDefault();
-      window.preview.render(obj);
+      window.bigpicture.render(obj);
     });
 
     return picture;

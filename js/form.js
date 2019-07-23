@@ -247,6 +247,8 @@
   var onPhotoLoaderChange = function () {
     // показываем форму редактирования
     window.utils.showNode(formContainerElement);
+    // и шкалу, чтобы снять с неё размеры
+    window.utils.showNode(window.effect.scaleBlock);
     // получим необходимые размеры пина и шкалы
     pinSize = window.effect.pin.offsetWidth;
     window.data.pinLocation.min = pinSize / 2;

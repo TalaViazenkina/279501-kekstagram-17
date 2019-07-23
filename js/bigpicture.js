@@ -246,7 +246,7 @@
     document.addEventListener('keydown', onBigPictureEscPress);
   };
 
-  window.preview = {
+  window.bigpicture = {
     render: renderBigPicture
   };
 })();

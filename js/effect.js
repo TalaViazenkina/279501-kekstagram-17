@@ -191,6 +191,7 @@
     }
   };
 
+
   window.effect = {
     isScale: isScaleVisible,
     scale: filterScaleElement,
