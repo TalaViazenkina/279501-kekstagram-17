@@ -18,11 +18,11 @@
   // маскимальное допустимое количество хэш-тегов по ТЗ
   var HASHTAG_MAX_COUNT = 5;
 
-  var fileUploadElement = window.data.form.querySelector('#upload-file'); // поле загрузки фото
   var formContainerElement = window.data.form.querySelector('.img-upload__overlay');
   var formCloseElement = window.data.form.querySelector('#upload-cancel'); // закрытие формы редактирования
 
-  var previewElement = window.data.form.querySelector('.img-upload__preview img');
+  var preview = window.data.preview;
+  var photoInitial = preview.src; // превью поумолчанию
 
   // управление размером
   var scaleSmallerElement = window.data.form.querySelector('.scale__control--smaller');
@@ -53,8 +53,6 @@
   var hashtagInputElement = window.data.form.querySelector('.text__hashtags'); // поле ввода хэш-тегов
 
 
-
-
   //  ф-ции, необходимые для изменения размеров превью
   /**
   * увеличивает размер превью
@@ -64,7 +62,7 @@
     currentValue += ScaleValue.STEP;
 
     scaleInputElement.value = (currentValue <= ScaleValue.MAX) ? (currentValue + '%') : (ScaleValue.MAX + '%');
-    previewElement.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
+    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
   };
 
   /**
@@ -75,7 +73,7 @@
     currentValue -= ScaleValue.STEP;
 
     scaleInputElement.value = (currentValue >= ScaleValue.MIN) ? (currentValue + '%') : (ScaleValue.MIN + '%');
-    previewElement.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
+    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
   };
 
   /**
@@ -201,7 +199,7 @@
       // изменяем значение глубины эффекта
       filterInputElement.value = Math.round((currentValue - pinLocation.min) / (pinLocation.max - pinLocation.min) * coefficient);
       // применяем эффект
-      previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
+      preview.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 
       // записываем в стартовую координату текущую координату
       startCoord = moveEvt.clientX;
@@ -244,7 +242,7 @@
     if (evt.target.name === 'effect') {
 
       // удаляем с превью класс начинающийся с 'effects__preview--'
-      removeClass(previewElement, 'effects__preview--');
+      removeClass(preview, 'effects__preview--');
 
       if (evt.target.id !== 'effect-none') {
         // добавляем шкалу, если она была скрыта и обработчик перемещения ползунка
@@ -262,9 +260,9 @@
         // обновляем значение текущего фильтра
         currentFilter = evt.target.value;
         // добавляем новый класс в зависимости от фильтра
-        previewElement.classList.add('effects__preview--' + currentFilter);
+        preview.classList.add('effects__preview--' + currentFilter);
         // обновляем стили
-        previewElement.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
+        preview.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 
       } else {
         // скрываем шкалу и удаляем обработчик
@@ -274,7 +272,7 @@
           filterPinElement.removeEventListener('mousedown', onPinMouseDown);
         }
         // обнуляем стили
-        previewElement.style.filter = '';
+        preview.style.filter = '';
       }
 
     }
@@ -285,9 +283,9 @@
   */
   var clearEffect = function () {
     // удаляем с превью класс начинающийся с 'effects__preview--'
-    removeClass(previewElement, 'effects__preview--');
+    removeClass(preview, 'effects__preview--');
     // сбрасывает стили
-    previewElement.style.filter = '';
+    preview.style.filter = '';
   };
 
 
@@ -382,15 +380,25 @@
 
   // ф-ции, необходимые для закрытия формы редактирования
   /**
+  * меняет превью на превью по умолчанию
+  */
+  var clearPhoto = function () {
+    window.data.preview.src = photoInitial;
+  };
+
+
+  /**
   * скрывает форму редактирования
   */
   var closeForm = function () {
     window.utils.hideNode(formContainerElement);
     // "сбрасываем" форму
     window.data.form.reset();
-    fileUploadElement.value = '';
+    window.data.photoLoader.value = '';
     // у превью удаляем класс с именем эффекта и обнуляем эффекты
     clearEffect();
+    // возвращаем исходное превью
+    clearPhoto();
 
     // удаляем листенеры
     window.data.form.removeEventListener('click', onButtonSizeClick);
@@ -439,8 +447,10 @@
     }
   };
 
-  // открытие формы редактирования при выборе файла
-  fileUploadElement.addEventListener('change', function () {
+  /**
+  * описывает действия при выборе файла
+  */
+  var onPhotoLoaderChange = function () {
     // показываем форму редактирования
     window.utils.showNode(formContainerElement);
     // получим необходимые размеры пина и шкалы
@@ -470,11 +480,14 @@
     // добавляем листенеры закрытия формы
     formCloseElement.addEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onFormEscPress);
-  });
+  };
+
+  // открытие формы редактирования при выборе файла
+  window.data.photoLoader.addEventListener('change', onPhotoLoaderChange);
 
   window.form = {
-    fileLoader: fileUploadElement,
     close: closeForm,
+    open: onPhotoLoaderChange,
     onEscPress: onFormEscPress
   };
 

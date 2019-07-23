@@ -69,7 +69,7 @@
   var onButtonChoiceClick = function (evt) {
     evt.preventDefault();
     closeSavingError();
-    window.form.fileLoader.click();
+    window.data.photoLoader.click();
   };
 
   /**
