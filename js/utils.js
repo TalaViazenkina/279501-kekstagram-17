@@ -67,6 +67,23 @@
       if (node.classList.contains('hidden')) {
         node.classList.remove('hidden');
       }
+    },
+
+    /**
+    * удаляет с элемента класс, начинающийся с искомой строки
+    * @param {Element} el
+    * @param {String} unit
+    */
+    removeClass: function (el, unit) {
+      if (el.classList.length !== 0) {
+        var initialClasses = Array.prototype.slice.call(el.classList);
+        initialClasses.forEach(function (it) {
+          if (it.indexOf(unit) === 0) {
+            el.classList.remove(it);
+          }
+        });
+      }
     }
+
   };
 })();
