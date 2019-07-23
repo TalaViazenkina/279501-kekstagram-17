@@ -435,7 +435,7 @@
     if (!window.backend.isSaving) {
       window.backend.isSaving = true;
       var formData = new FormData(window.data.form);
-      window.backend.save(formData, window.popup.onSuccess, window.popup.onError);
+      window.backend.save(formData, window.success, window.error.onSaving);
     }
   };
 

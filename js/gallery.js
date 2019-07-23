@@ -80,16 +80,14 @@
     filtersContainerElement.classList.remove('img-filters--inactive');
   };
 
-  var onErrorLoad = function (message) {
-    console.log(message);
-  };
 
-  window.backend.load(onSuccessLoad, onErrorLoad);
+  window.backend.load(onSuccessLoad, window.error.onLoading);
 
   window.gallery = {
     data: data,
     filtersContainer: filtersContainerElement,
-    renderPictureList: renderPictureList
+    renderPictureList: renderPictureList,
+    onSuccessLoad: onSuccessLoad
   };
 
 })();
