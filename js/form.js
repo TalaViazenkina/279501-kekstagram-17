@@ -60,6 +60,13 @@
   };
 
   /**
+  * возвращает изначальный маштаб 100%
+  */
+  var normalizeSize = function () {
+    preview.style.transform = 'scale(' + (ScaleValue.MAX / window.data.COEFFICIENT) + ')';
+  };
+
+  /**
   * изменяет размер превью в зависисти от кнопки
   * @param {Event} evt
   */
@@ -188,9 +195,11 @@
     window.utils.hideNode(formContainerElement);
     // "сбрасываем" форму
     window.data.form.reset();
-    window.data.photoLoader.value = '';
-    // у превью удаляем класс с именем эффекта и обнуляем эффекты
+
+    // у превью удаляем класс с именем эффекта, обнуляем эффекты
     clearEffect();
+    // возвращаем исходный масштаб
+    normalizeSize();
     // возвращаем исходное превью
     clearPhoto();
 
