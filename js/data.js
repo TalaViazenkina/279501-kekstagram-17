@@ -13,6 +13,7 @@
     max: 0
   };
   window.data = {
+    COEFFICIENT: 100, // для перевода долей в проценты
     form: formElement,
     main: mainElement,
     photoLoader: photoLoaderElement,

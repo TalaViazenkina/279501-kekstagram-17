@@ -12,7 +12,7 @@
   var filterInputElement = scaleBlockElement.querySelector('.effect-level__value'); // инпут
 
   var filterValueInitial = 100; // стартовое значение фильтра
-  var coefficient = 100; // для перевода долей в проценты
+
   var isScaleVisible; // флаг отображения шкалы эффекта
 
   var currentFilter; // текущий выбранный фильтр
@@ -92,7 +92,7 @@
   */
   var composeFilterString = function (filter, value) {
     // рассчитаем величину эффекта в зависимости от min и max значений, допустимых для данного фильтра
-    var calculatedValue = value / coefficient * (filter.max - filter.min) + filter.min;
+    var calculatedValue = value / window.data.COEFFICIENT * (filter.max - filter.min) + filter.min;
     // соберем строку с названием фильтра, его значением и единицами измерения
     var filterString = filter.style + '(' + calculatedValue + filter.unit + ')';
 
@@ -124,7 +124,7 @@
       // перемещаем ползунок
       movePin(currentValue);
       // изменяем значение глубины эффекта
-      filterInputElement.value = Math.round((currentValue - window.data.pinLocation.min) / (window.data.pinLocation.max - window.data.pinLocation.min) * coefficient);
+      filterInputElement.value = Math.round((currentValue - window.data.pinLocation.min) / (window.data.pinLocation.max - window.data.pinLocation.min) * window.data.COEFFICIENT);
       // применяем эффект
       preview.style.filter = composeFilterString(filterStyleMap[currentFilter], filterInputElement.value);
 

@@ -45,7 +45,7 @@
     currentValue += ScaleValue.STEP;
 
     scaleInputElement.value = (currentValue <= ScaleValue.MAX) ? (currentValue + '%') : (ScaleValue.MAX + '%');
-    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
+    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / window.data.COEFFICIENT) + ')';
   };
 
   /**
@@ -56,7 +56,7 @@
     currentValue -= ScaleValue.STEP;
 
     scaleInputElement.value = (currentValue >= ScaleValue.MIN) ? (currentValue + '%') : (ScaleValue.MIN + '%');
-    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / 100) + ')';
+    preview.style.transform = 'scale(' + (parseInt(scaleInputElement.value, 10) / window.data.COEFFICIENT) + ')';
   };
 
   /**
