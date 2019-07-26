@@ -5,10 +5,7 @@
   * @const
   * @type {number}
   */
-  var Keycode = {
-    ENTER: 13,
-    ESC: 27
-  };
+  var ESC_KEYCODE = 27;
 
   window.utils = {
     /**
@@ -17,16 +14,7 @@
     * @return {Boolean}
     */
     isEscEvent: function (evt) {
-      return evt.keyCode === Keycode.ESC;
-    },
-
-    /**
-    * проверяет, был ли нажат enter
-    * @param {event} evt
-    * @return {Boolean}
-    */
-    isEnterEvent: function (evt) {
-      return evt.keyCode === Keycode.ENTER;
+      return evt.keyCode === ESC_KEYCODE;
     },
 
     /**
