@@ -94,9 +94,7 @@
     // рассчитаем величину эффекта в зависимости от min и max значений, допустимых для данного фильтра
     var calculatedValue = value / window.data.COEFFICIENT * (filter.max - filter.min) + filter.min;
     // соберем строку с названием фильтра, его значением и единицами измерения
-    var filterString = filter.style + '(' + calculatedValue + filter.unit + ')';
-
-    return filterString;
+    return filter.style + '(' + calculatedValue + filter.unit + ')';
   };
 
   /**

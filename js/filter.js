@@ -24,8 +24,7 @@
   */
   var filterLatestPhoto = function (arr) {
     var copyArray = arr.slice();
-    var filteredArray = window.utils.getMixedArray(copyArray).slice(0, LATEST_PHOTO_AMOUNT);
-    return filteredArray;
+    return window.utils.getMixedArray(copyArray).slice(0, LATEST_PHOTO_AMOUNT);
   };
 
   /**
@@ -34,8 +33,7 @@
   * @return {Array}
   */
   var filterPopularPhoto = function (arr) {
-    var filteredArray = arr.slice();
-    return filteredArray;
+    return arr.slice();
   };
 
   /**
@@ -44,10 +42,9 @@
   * @return {Array}
   */
   var filterDiscussedPhoto = function (arr) {
-    var filteredArray = arr.slice().sort(function (first, second) {
+    return arr.slice().sort(function (first, second) {
       return second.comments.length - first.comments.length;
     });
-    return filteredArray;
   };
 
   // создадим объект-мапу, хранящий соотношение id фильтра и функции, возвращающей массив фотографий
