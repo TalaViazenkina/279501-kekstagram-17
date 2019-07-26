@@ -139,9 +139,6 @@
   * @param {Array} comments
   */
   var fillCommentsList = function (comments) {
-    // удалим присутствующие в разметки комментарии
-    clearComments();
-
     var fragment = document.createDocumentFragment();
 
     comments.forEach(function (it) {
@@ -204,11 +201,15 @@
     fillField(descriptionElement, obj.description);
 
     // отрисовка комментариев
-    // очистим блок с комментариями, если комментариев нет
+    // очистим блок с комментариями
+    clearComments();
+    // если комментариев нет, спрячем с блок с их количеством
+    // и кнопку загрузки дополнительных комментариев
     if (!obj.comments || obj.comments.length === 0) {
-      clearComments();
       window.utils.hideNode(commentsCountBlockElement);
+      window.utils.hideNode(commentsLoaderElement);
     } else {
+      // если комментарии есть:
       // создаем шаблон комментария
       commentItem = createComment();
 
